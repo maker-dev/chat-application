@@ -3,6 +3,7 @@ import { config } from 'dotenv';
 import cors from 'cors';
 import connectDb from './config/db.js';
 import userRouter from './routes/userRoutes.js';
+import chatRouter from './routes/chatRoutes.js';
 import { notFound, errorHandler } from './middlewares/errorMiddleware.js';
 
 //config env
@@ -21,6 +22,7 @@ app.use(express.json());
 
 //routes
 app.use("/api/user", userRouter);
+app.use("/api/chat", chatRouter);
 
 //Error handling middlewares
 app.use(notFound);

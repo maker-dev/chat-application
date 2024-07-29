@@ -1,6 +1,9 @@
 import UserModel from "../models/User.js";
 import generateToken from '../config/generateToken.js';
 
+//@description     Register new user
+//@route           POST /api/user/register
+//@access          Public
 const registerUser = async (req, res) => {
     const { name, email, password, pic } = req.body;
 
@@ -34,6 +37,9 @@ const registerUser = async (req, res) => {
     }
 }
 
+//@description     Auth the user
+//@route           POST /api/users/login
+//@access          Public
 const loginUser = async (req, res) => {
     const { email, password } = req.body;
 
@@ -52,4 +58,22 @@ const loginUser = async (req, res) => {
     }
 }
 
-export { registerUser, loginUser };
+
+//@description     Get or Search all users
+//@route           GET /api/user?search=
+//@access          Public
+const allUsers = async (req, res) => {
+
+    const keyword = req.query.search ? {
+        $or: [
+            { name: { $regex: req.query.search, $options: "i" } },
+            { email: { $regex: req.query.search, $options: "i" } }
+        ]
+    } : {};
+
+    const users = await UserModel.find(keyword).find({ _id: { $ne: req.user._id } }).select("-password");
+    
+    res.send(users);
+}
+
+export { registerUser, loginUser, allUsers };
