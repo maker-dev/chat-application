@@ -7,6 +7,7 @@ import * as yup from 'yup';
 import registerSchema from "../../validation/registerSchema";
 
 function Register() {
+  
   const navigate = useNavigate();
   const toast = useToast();
   const [showPassword, setShowPassword] = useState<boolean>(false);

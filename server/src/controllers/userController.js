@@ -21,7 +21,7 @@ const registerUser = async (req, res) => {
         name,
         email,
         password,
-        pic
+        pic: pic === "" ? undefined : pic
     })
 
     if (user) {

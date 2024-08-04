@@ -29,4 +29,13 @@ const loginUser = async (data: UserLogin) => {
     })
 }
 
-export { registerUser, loginUser };
+const searchUser = async (keyword: string, token: string) => {
+    const config = {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    };
+    return axiosClient.get(`/user?search=${keyword}`, config);
+}
+
+export { registerUser, loginUser, searchUser };
