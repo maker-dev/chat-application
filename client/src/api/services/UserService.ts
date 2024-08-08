@@ -38,4 +38,5 @@ const searchUser = async (keyword: string, token: string) => {
     return axiosClient.get(`/user?search=${keyword}`, config);
 }
 
+
 export { registerUser, loginUser, searchUser };

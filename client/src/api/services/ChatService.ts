@@ -22,4 +22,17 @@ const fetchChats = async (token: string) => {
 }
 
 
-export { accessChat, fetchChats};
+const createGroup = async (name: string, users: string, token: string) => {
+    const config = {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    };
+    const data = {
+        name,
+        users
+    }
+    return axiosClient.post(`/chat/group`, data, config);
+}
+
+export { accessChat, fetchChats, createGroup};
