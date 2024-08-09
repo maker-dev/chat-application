@@ -6,20 +6,12 @@ import { AxiosError } from "axios";
 import UserListItem from "../UserAvatar/UserListItem";
 import UserBadgeItem from "../UserAvatar/UserBadgeItem";
 import { createGroup } from "../../api/services/ChatService";
+import {User} from '../../interfaces/User';
 
 interface GroupChatModalProps {
     children: React.ReactNode;
 }
 
-interface User {
-  _id: string;
-  name: string;
-  email: string;
-  isAdmin: boolean;
-  pic: string;
-  createdAt: string;
-  updatedAt: string;
-}
 
 function GroupChatModal({children}: GroupChatModalProps) {
 

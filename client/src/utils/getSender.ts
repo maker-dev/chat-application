@@ -17,7 +17,7 @@ interface ChatUser {
 }
 
 
-const getSender = (loggedUser: User, users: ChatUser[]) => {
+const getSender = (loggedUser: User, users: ChatUser[]): string => {
     return users[0]._id === loggedUser._id ? users[1].name : users[0].name;
 }
 

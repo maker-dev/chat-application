@@ -1,15 +1,7 @@
 import { Avatar } from "@chakra-ui/avatar";
 import { Box, Text } from "@chakra-ui/layout";
+import {User} from '../../interfaces/User';
 
-interface User {
-  _id: string;
-  name: string;
-  email: string;
-  isAdmin: boolean;
-  pic: string;
-  createdAt: string;
-  updatedAt: string;
-}
 interface UserListItemProp {
   handleFunction: () => void;
   user: User;

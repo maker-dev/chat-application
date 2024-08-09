@@ -3,10 +3,12 @@ import useUser from "../hooks/useChat"
 import SideDrawer from "../components/miscellaneous/SideDrawer";
 import MyChats from "../components/MyChats";
 import ChatBox from "../components/ChatBox";
+import { useState } from "react";
 
 function ChatPage() {
 
   const { user } = useUser();
+  const [fetchAgain, setFetchAgain] = useState<boolean>(false);
 
   return (
     <Box>
@@ -16,10 +18,10 @@ function ChatPage() {
         justifyContent="space-between" 
         width="100%"
         h="calc(100vh - 53.5px)"
-        p={1}
+        p={2}
       >
-        {user && <MyChats />}
-        {user && <ChatBox />  }
+        {user && <MyChats fetchAgain={fetchAgain} />}
+        {user && <ChatBox fetchAgain={fetchAgain} setFetchAgain={setFetchAgain}/>  }
       </Box>
     </Box>
   )

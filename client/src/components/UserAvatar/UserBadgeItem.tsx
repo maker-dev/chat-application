@@ -1,15 +1,7 @@
 import { CloseIcon } from "@chakra-ui/icons";
 import { Box } from "@chakra-ui/react"
+import {User} from '../../interfaces/User';
 
-interface User {
-  _id: string;
-  name: string;
-  email: string;
-  isAdmin: boolean;
-  pic: string;
-  createdAt: string;
-  updatedAt: string;
-}
 
 interface UserBadgeItemProps {
     user: User;

@@ -7,19 +7,15 @@ import { AddIcon } from "@chakra-ui/icons";
 import ChatLoading from "./ChatLoading";
 import getSender from "../utils/getSender";
 import GroupChatModal from "./miscellaneous/GroupChatModal";
+import {UserAuth} from '../context/ChatProvider';
 
-interface User {
-    _id: string;
-    name: string;
-    email: string;
-    pic: string;
-    token: string;
+interface MyChatsProps {
+  fetchAgain: boolean;
 }
 
+function MyChats({fetchAgain}: MyChatsProps) {
 
-function MyChats() {
-
-  const [loggedUser, setLoggedUser] = useState<User>({} as User);
+  const [loggedUser, setLoggedUser] = useState<UserAuth>({} as UserAuth);
   const { user, setChats, selectedChat, chats, setSelectedChat } = useChat();
   const toast = useToast();
   const fetchChatsHandler = async () => {
@@ -52,7 +48,7 @@ function MyChats() {
     if (userInfoString) setLoggedUser(JSON.parse(userInfoString));
     if (user.token) fetchChatsHandler();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user.token]);
+  }, [user.token, fetchAgain]);
 
   return (
     <Box

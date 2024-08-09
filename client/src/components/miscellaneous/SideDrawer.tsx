@@ -9,21 +9,13 @@ import ChatLoading from "../ChatLoading";
 import UserListItem from "../UserAvatar/UserListItem";
 import { accessChat } from "../../api/services/ChatService";
 import useChat from "../../hooks/useChat";
-
-interface User {
-  _id: string;
-  name: string;
-  email: string;
-  isAdmin: boolean;
-  pic: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import {UserAuth, Chat} from '../../context/ChatProvider';
+import {User} from '../../interfaces/User';
 
 function SideDrawer() {
   
   const navigate = useNavigate();
-  const { user, setSelectedChat, chats, setChats } = useChat();
+  const { user, setUser, setSelectedChat, chats, setChats } = useChat();
   const [search, setSearch] = useState<string>("");
   const [searchResult, setSearchResult] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -33,6 +25,9 @@ function SideDrawer() {
 
   const logoutHandler = () => {
     window.localStorage.removeItem("userInfo");
+    setSelectedChat({} as Chat);
+    setChats([]);
+    setUser({} as UserAuth);
     navigate("/");
   }
 

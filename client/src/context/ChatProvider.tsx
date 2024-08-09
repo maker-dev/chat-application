@@ -5,7 +5,7 @@ interface ChatProviderProps {
     children: React.ReactNode;
 }
 
-interface User {
+export interface UserAuth {
     _id: string;
     name: string;
     email: string;
@@ -13,7 +13,7 @@ interface User {
     token: string;
 }
 
-interface ChatUser {
+export interface ChatUser {
     _id: string;
     name: string;
     email: string;
@@ -23,18 +23,19 @@ interface ChatUser {
     isAdmin?: boolean;
 }
 
-interface Chat {
+export interface Chat {
     _id: string;
     chatName: string;
     isGroupChat: boolean;
     users: ChatUser[];
+    groupAdmin: ChatUser;
     createdAt: string;
     updatedAt: string;
 }
 
 export interface ChatContextType {
-    user: User;
-    setUser: (user: User) => void;
+    user: UserAuth;
+    setUser: (user: UserAuth) => void;
     selectedChat: Chat;
     setSelectedChat: (selectedChat: Chat) => void;
     chats: Chat[];
@@ -45,7 +46,7 @@ const ChatContext = createContext<ChatContextType>({} as ChatContextType);
 
 function ChatProvider({ children }: ChatProviderProps) {
     
-    const [user, setUser] = useState<User>({} as User);
+    const [user, setUser] = useState<UserAuth>({} as UserAuth);
     const [selectedChat, setSelectedChat] = useState<Chat>({} as Chat);
     const [chats, setChats] = useState<Chat[]>([]);
     const navigate = useNavigate();
