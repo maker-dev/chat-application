@@ -13,10 +13,11 @@ import {User} from '../../interfaces/User';
 interface UpdateGroupChatProps {
   fetchAgain: boolean;
   setFetchAgain: Dispatch<SetStateAction<boolean>>;
+  fetchMessages: () => void;
 }
 
 
-function UpdateGroupChat({fetchAgain, setFetchAgain}: UpdateGroupChatProps) {
+function UpdateGroupChat({fetchAgain, setFetchAgain, fetchMessages}: UpdateGroupChatProps) {
 
     const {onClose, onOpen, isOpen} = useDisclosure();
 
@@ -99,6 +100,7 @@ function UpdateGroupChat({fetchAgain, setFetchAgain}: UpdateGroupChatProps) {
             const {data} = await groupRemove(selectedChat._id, userId, user.token);
             userId === user._id ? setSelectedChat({} as Chat) : setSelectedChat(data);
             setFetchAgain(!fetchAgain);
+            fetchMessages();
             setLoading(false);
         } catch (error) {
             if (error instanceof AxiosError) {
