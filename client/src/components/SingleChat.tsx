@@ -51,8 +51,6 @@ function SingleChat({fetchAgain, setFetchAgain}: SingleChatProps) {
 
             setMessages(data);
 
-            console.log(data);
-
             setLoading(false);
         } catch (error) {
             if (error instanceof AxiosError) {
