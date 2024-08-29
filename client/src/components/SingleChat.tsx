@@ -9,6 +9,7 @@ import UpdateGroupChat from "./miscellaneous/UpdateGroupChat";
 import {Chat} from '../context/ChatProvider';
 import { fetchAllMessages, sendNewMessage } from "../api/services/MessageService";
 import { AxiosError } from "axios";
+import io, { Socket } from 'socket.io-client';
 import ScrollableChat from "./ScrollableChat";
 
 interface SingleChatProps {
@@ -31,6 +32,10 @@ export interface Message {
     updatedAt: string;
 }
 
+const ENDPOINT: string = "http://localhost:5000";
+
+let socket: Socket;
+let selectedChatCompare: Chat;
 
 function SingleChat({fetchAgain, setFetchAgain}: SingleChatProps) {
     
@@ -40,7 +45,8 @@ function SingleChat({fetchAgain, setFetchAgain}: SingleChatProps) {
     const [loading, setLoading] = useState<boolean>(false);
     const [newMessage, setNewMessage] = useState<string>("");
     const [messages, setMessages] = useState<Message[]>([]);
-
+    const [socketConnected, setSocketConnected] = useState<boolean>(false);
+    console.log(socketConnected)
     const fetchMessages = async () => {
         if (!selectedChat) return;
 
@@ -52,6 +58,8 @@ function SingleChat({fetchAgain, setFetchAgain}: SingleChatProps) {
             setMessages(data);
 
             setLoading(false);
+
+            socket.emit("join chat", selectedChat._id);
         } catch (error) {
             if (error instanceof AxiosError) {
                 toast({
@@ -75,10 +83,37 @@ function SingleChat({fetchAgain, setFetchAgain}: SingleChatProps) {
     }
 
     useEffect(() => {
+        socket = io(ENDPOINT);
+        
+        socket.emit("setup", user);
+        
+        socket.on("connection", () => {
+            setSocketConnected(true);
+        });
+
+        return () => {
+            socket.disconnect();
+            setSocketConnected(false);
+        }
+    }, [user])
+
+
+    useEffect(() => {
         if (selectedChat?._id) fetchMessages();
+        selectedChatCompare = selectedChat;
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedChat])
 
+
+    useEffect(() => {
+        socket.on("message received", newMessageReceived => {
+            if (!selectedChatCompare || selectedChatCompare._id !== newMessageReceived.chat._id) {
+                //give notification
+            } else {
+                setMessages([...messages, newMessageReceived])
+            }
+        })
+    })
 
     const typingHandler = (e: ChangeEvent<HTMLInputElement>) => {
         setNewMessage(e.target.value);
@@ -89,6 +124,7 @@ function SingleChat({fetchAgain, setFetchAgain}: SingleChatProps) {
             try {
                 const {data} = await sendNewMessage(selectedChat._id, newMessage, user.token);
                 setNewMessage("");
+                socket.emit("new message", data);
                 setMessages([...messages, data]);
             } catch (error) {
                 if (error instanceof AxiosError) {
