@@ -11,6 +11,8 @@ import { fetchAllMessages, sendNewMessage } from "../api/services/MessageService
 import { AxiosError } from "axios";
 import io, { Socket } from 'socket.io-client';
 import ScrollableChat from "./ScrollableChat";
+import Lottie from 'react-lottie';
+import animationData from '../animations/typing.json';
 
 interface SingleChatProps {
   fetchAgain: boolean;
@@ -42,11 +44,22 @@ function SingleChat({fetchAgain, setFetchAgain}: SingleChatProps) {
     const {user, selectedChat, setSelectedChat} = useChat();
     const toast = useToast();
 
+    const defaultOptions = {
+        loop: true,
+        autoplay: true,
+        animationData: animationData,
+        renderSettings: {
+            preserveAspectRatio: "xMidYMid slice"
+        }
+    }
+
     const [loading, setLoading] = useState<boolean>(false);
     const [newMessage, setNewMessage] = useState<string>("");
     const [messages, setMessages] = useState<Message[]>([]);
     const [socketConnected, setSocketConnected] = useState<boolean>(false);
-    console.log(socketConnected)
+    const [typing, setTyping] = useState<boolean>(false);
+    const [isTyping, setIsTyping] = useState<boolean>(false);
+
     const fetchMessages = async () => {
         if (!selectedChat) return;
 
@@ -87,9 +100,13 @@ function SingleChat({fetchAgain, setFetchAgain}: SingleChatProps) {
         
         socket.emit("setup", user);
         
-        socket.on("connection", () => {
+        socket.on("connected", () => {
             setSocketConnected(true);
         });
+
+        socket.on("typing", () => setIsTyping(true))
+
+        socket.on("stop typing", () => setIsTyping(false));
 
         return () => {
             socket.disconnect();
@@ -117,10 +134,32 @@ function SingleChat({fetchAgain, setFetchAgain}: SingleChatProps) {
 
     const typingHandler = (e: ChangeEvent<HTMLInputElement>) => {
         setNewMessage(e.target.value);
+
+        if (!socketConnected) return
+        
+        if (!typing) {
+            setTyping(true);
+            socket.emit("typing", selectedChat._id);
+        }
+
+        const lastTypingTime = new Date().getTime();
+
+        const timerlength: number = 3000;
+
+        setTimeout(() => {
+            const timeNow = new Date().getTime();
+            const timeDiff = timeNow - lastTypingTime;
+
+            if (timeDiff >= timerlength && typing) {
+                socket.emit("stop typing", selectedChat._id); 
+                setTyping(false);
+            }
+        }, timerlength);
     }
 
     const sendMessage = async (e: KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter" && newMessage) {
+            socket.emit("stop typing", selectedChat._id);
             try {
                 const {data} = await sendNewMessage(selectedChat._id, newMessage, user.token);
                 setNewMessage("");
@@ -219,6 +258,14 @@ function SingleChat({fetchAgain, setFetchAgain}: SingleChatProps) {
                         onKeyDown={sendMessage} 
                         isRequired 
                         mt={3}>
+                        {isTyping && 
+                        <div>
+                            <Lottie 
+                                options={defaultOptions}
+                                width={70}
+                                style={{marginBottom: 15, marginLeft: 0}}
+                            />
+                        </div>}
                             <Input 
                                 variant={"filled"}
                                 bg={"#E0E0E0"}
