@@ -6,14 +6,26 @@ import isSameSender from "../utils/isSameSender"
 import isLastMessage from "../utils/isLastMessage"
 import isSameSenderMargin from "../utils/isSameSenderMargin"
 import isSameUser from "../utils/isSameUser"
+import Lottie from 'react-lottie';
+import animationData from '../animations/typing.json';
 
 interface ScrollableChatProps {
-    messages: Message[]
+    messages: Message[],
+    isTyping: boolean;
 }
 
-function ScrollableChat({messages}: ScrollableChatProps) {
+function ScrollableChat({messages, isTyping}: ScrollableChatProps) {
 
   const {user} = useChat();
+
+  const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: animationData,
+    renderSettings: {
+        preserveAspectRatio: "xMidYMid slice"
+    }
+  }
 
   return (
     <ScrollableFeed>
@@ -65,6 +77,15 @@ function ScrollableChat({messages}: ScrollableChatProps) {
             </Box>
           )
         })
+      }
+      {
+      isTyping && 
+      <div style={{width: "fit-content", marginTop: "15px"}}>
+          <Lottie 
+              options={defaultOptions}
+              width={70}
+          />
+      </div>
       }
     </ScrollableFeed>
   )

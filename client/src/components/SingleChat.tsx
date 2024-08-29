@@ -11,8 +11,6 @@ import { fetchAllMessages, sendNewMessage } from "../api/services/MessageService
 import { AxiosError } from "axios";
 import io, { Socket } from 'socket.io-client';
 import ScrollableChat from "./ScrollableChat";
-import Lottie from 'react-lottie';
-import animationData from '../animations/typing.json';
 
 interface SingleChatProps {
   fetchAgain: boolean;
@@ -44,14 +42,7 @@ function SingleChat({fetchAgain, setFetchAgain}: SingleChatProps) {
     const {user, selectedChat, setSelectedChat} = useChat();
     const toast = useToast();
 
-    const defaultOptions = {
-        loop: true,
-        autoplay: true,
-        animationData: animationData,
-        renderSettings: {
-            preserveAspectRatio: "xMidYMid slice"
-        }
-    }
+
 
     const [loading, setLoading] = useState<boolean>(false);
     const [newMessage, setNewMessage] = useState<string>("");
@@ -128,6 +119,7 @@ function SingleChat({fetchAgain, setFetchAgain}: SingleChatProps) {
                 //give notification
             } else {
                 setMessages([...messages, newMessageReceived])
+                console.log(newMessageReceived);
             }
         })
     })
@@ -249,6 +241,7 @@ function SingleChat({fetchAgain, setFetchAgain}: SingleChatProps) {
                         >
                             <ScrollableChat 
                                 messages={messages}
+                                isTyping={isTyping}
                             />
                         </Box>
                     )
@@ -258,14 +251,6 @@ function SingleChat({fetchAgain, setFetchAgain}: SingleChatProps) {
                         onKeyDown={sendMessage} 
                         isRequired 
                         mt={3}>
-                        {isTyping && 
-                        <div>
-                            <Lottie 
-                                options={defaultOptions}
-                                width={70}
-                                style={{marginBottom: 15, marginLeft: 0}}
-                            />
-                        </div>}
                             <Input 
                                 variant={"filled"}
                                 bg={"#E0E0E0"}
