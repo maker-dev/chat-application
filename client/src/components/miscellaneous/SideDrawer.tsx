@@ -11,11 +11,12 @@ import { accessChat } from "../../api/services/ChatService";
 import useChat from "../../hooks/useChat";
 import {UserAuth, Chat} from '../../context/ChatProvider';
 import {User} from '../../interfaces/User';
+import getSender from "../../utils/getSender";
 
 function SideDrawer() {
   
   const navigate = useNavigate();
-  const { user, setUser, setSelectedChat, chats, setChats } = useChat();
+  const { user, setUser, setSelectedChat, chats, setChats, notifications, setNotifications } = useChat();
   const [search, setSearch] = useState<string>("");
   const [searchResult, setSearchResult] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -28,6 +29,7 @@ function SideDrawer() {
     setSelectedChat({} as Chat);
     setChats([]);
     setUser({} as UserAuth);
+    setNotifications([]);
     navigate("/");
   }
 
@@ -129,10 +131,45 @@ function SideDrawer() {
 
         <Box>
           <Menu>
-            <MenuButton p={1}>
+            <MenuButton p={1} position={"relative"} mr={2}>
               <BellIcon fontSize={"2xl"} m={1}/>
+                {notifications.length > 0 && (
+                <Box
+                  position="absolute"
+                  top="0"
+                  right="0"
+                  bg="red.500"
+                  color="white"
+                  borderRadius="full"
+                  fontSize="0.6em"
+                  width="16px"
+                  height="16px"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  fontWeight={"bold"}
+                >
+                  {notifications.length}
+                </Box>
+              )}
             </MenuButton>
-            {/* <MenuList></MenuList> */}
+            <MenuList pl={2}>
+              {!notifications.length && "No New Messages"}
+              {
+                notifications.map(notif => {
+                  return <MenuItem key={notif._id} onClick={() => {
+                    setSelectedChat(notif.chat)
+                    setNotifications(notifications.filter(n => n !== notif))
+                  }}>
+                    {
+                    notif.chat.isGroupChat 
+                    ? `New Message in ${notif.chat.chatName}` 
+                    : `New Message from ${getSender(user, notif.chat.users)}`
+                    } 
+                  </MenuItem>
+                })
+              }
+            </MenuList>
           </Menu>
           <Menu>
             <MenuButton

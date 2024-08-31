@@ -1,5 +1,6 @@
 import { createContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom";
+import { Message } from "../components/SingleChat";
 
 interface ChatProviderProps {
     children: React.ReactNode;
@@ -40,6 +41,8 @@ export interface ChatContextType {
     setSelectedChat: (selectedChat: Chat) => void;
     chats: Chat[];
     setChats: (chats: Chat[]) => void;
+    notifications: Message[];
+    setNotifications: (notifications: Message[]) => void;
 }
 
 const ChatContext = createContext<ChatContextType>({} as ChatContextType);
@@ -49,6 +52,7 @@ function ChatProvider({ children }: ChatProviderProps) {
     const [user, setUser] = useState<UserAuth>({} as UserAuth);
     const [selectedChat, setSelectedChat] = useState<Chat>({} as Chat);
     const [chats, setChats] = useState<Chat[]>([]);
+    const [notifications, setNotifications] = useState<Message[]>([]);
     const navigate = useNavigate();
     
     useEffect(() => {
@@ -67,7 +71,7 @@ function ChatProvider({ children }: ChatProviderProps) {
     }, [navigate]);
 
     return (
-        <ChatContext.Provider value={{user, setUser, selectedChat, setSelectedChat, chats, setChats}}>
+        <ChatContext.Provider value={{user, setUser, selectedChat, setSelectedChat, chats, setChats, notifications, setNotifications}}>
             {
                 children
             }
