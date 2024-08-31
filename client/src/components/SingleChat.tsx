@@ -1,6 +1,6 @@
 import { ChangeEvent, Dispatch, KeyboardEvent, SetStateAction, useEffect, useState } from "react";
 import useChat from "../hooks/useChat";
-import { Box, FormControl, IconButton, Input, Spinner, Text, useToast } from "@chakra-ui/react";
+import { Badge, Box, FormControl, IconButton, Input, Spinner, Text, useToast } from "@chakra-ui/react";
 import { ArrowBackIcon } from "@chakra-ui/icons";
 import getSender from "../utils/getSender";
 import ProfileModal from "./miscellaneous/ProfileModal";
@@ -11,6 +11,7 @@ import { fetchAllMessages, sendNewMessage } from "../api/services/MessageService
 import { AxiosError } from "axios";
 import io, { Socket } from 'socket.io-client';
 import ScrollableChat from "./ScrollableChat";
+import checkUserStatus from "../utils/checkUserStatus";
 
 interface SingleChatProps {
   fetchAgain: boolean;
@@ -39,7 +40,7 @@ let selectedChatCompare: Chat;
 
 function SingleChat({fetchAgain, setFetchAgain}: SingleChatProps) {
     
-    const {user, selectedChat, setSelectedChat, notifications, setNotifications} = useChat();
+    const {user, selectedChat, setSelectedChat, notifications, setNotifications, onlineUsers, setOnlineUsers} = useChat();
     const toast = useToast();
 
     const [loading, setLoading] = useState<boolean>(false);
@@ -112,6 +113,8 @@ function SingleChat({fetchAgain, setFetchAgain}: SingleChatProps) {
 
 
     useEffect(() => {
+
+        //get new messages
         socket.on("message received", newMessageReceived => {
             if (!selectedChatCompare || selectedChatCompare._id !== newMessageReceived.chat._id) {
                 if (!notifications.includes(newMessageReceived)) {
@@ -122,6 +125,15 @@ function SingleChat({fetchAgain, setFetchAgain}: SingleChatProps) {
                 setMessages([...messages, newMessageReceived])
             }
         })
+
+        //check users status
+        socket.on("online-users", onlineUsers => {
+            setOnlineUsers(onlineUsers);
+        })
+    })
+
+    useEffect(() => {
+
     })
 
     const typingHandler = (e: ChangeEvent<HTMLInputElement>) => {
@@ -183,7 +195,7 @@ function SingleChat({fetchAgain, setFetchAgain}: SingleChatProps) {
         <>{
             selectedChat?._id ? (
                 <>
-                <Text
+                <Box
                   display={"flex"}
                   justifyContent={{base: "space-between"}}
                   alignItems={"center"}
@@ -202,7 +214,20 @@ function SingleChat({fetchAgain, setFetchAgain}: SingleChatProps) {
                     {
                         !selectedChat.isGroupChat ? (
                             <>
-                                {getSender(user, selectedChat.users)}
+                                <Box
+                                    display={"flex"}
+                                    alignItems={"baseline"}
+                                >
+                                    {getSender(user, selectedChat.users)}
+                                    <Badge
+                                        width={"16px"}
+                                        height={"16px"}
+                                        backgroundColor={checkUserStatus(onlineUsers, user._id, selectedChat.users) === "online" ? "green" : "red"}
+                                        borderRadius={"full"}
+                                        ml={2}
+                                    >
+                                    </Badge>
+                                </Box>
                                 <ProfileModal user={getProfileSender(user, selectedChat.users)}/>
                             </>
                         ) : (
@@ -212,7 +237,7 @@ function SingleChat({fetchAgain, setFetchAgain}: SingleChatProps) {
                             </>
                         )
                     }
-                </Text>
+                </Box>
                 <Box
                     display={"flex"}
                     flexDir={"column"}

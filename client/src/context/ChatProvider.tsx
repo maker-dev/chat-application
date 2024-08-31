@@ -43,6 +43,8 @@ export interface ChatContextType {
     setChats: (chats: Chat[]) => void;
     notifications: Message[];
     setNotifications: (notifications: Message[]) => void;
+    onlineUsers: string[];
+    setOnlineUsers: (onlineUsers: string[]) => void;
 }
 
 const ChatContext = createContext<ChatContextType>({} as ChatContextType);
@@ -53,6 +55,7 @@ function ChatProvider({ children }: ChatProviderProps) {
     const [selectedChat, setSelectedChat] = useState<Chat>({} as Chat);
     const [chats, setChats] = useState<Chat[]>([]);
     const [notifications, setNotifications] = useState<Message[]>([]);
+    const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
     const navigate = useNavigate();
     
     useEffect(() => {
@@ -71,7 +74,7 @@ function ChatProvider({ children }: ChatProviderProps) {
     }, [navigate]);
 
     return (
-        <ChatContext.Provider value={{user, setUser, selectedChat, setSelectedChat, chats, setChats, notifications, setNotifications}}>
+        <ChatContext.Provider value={{user, setUser, selectedChat, setSelectedChat, chats, setChats, notifications, setNotifications, onlineUsers, setOnlineUsers}}>
             {
                 children
             }

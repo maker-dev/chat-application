@@ -39,13 +39,23 @@ app.use("/api/message", messageRouter);
 app.use(notFound);
 app.use(errorHandler);
 
+//store online users
+const onlineUsers = new Map();
+
 //socket io
 io.on("connection", (socket) => {
-    console.log("connected to socket io");
 
     socket.on("setup", (userData) => {
         socket.join(userData._id);
         socket.emit("connected");
+
+        onlineUsers.set(socket.id, userData._id);
+        io.emit("online-users", Array.from(onlineUsers.values()));
+    })
+
+    socket.on("disconnect", () => {
+        onlineUsers.delete(socket.id);
+        io.emit("online-users", Array.from(onlineUsers.values()));
     })
 
     socket.on("join chat", (room) => {
