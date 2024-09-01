@@ -12,7 +12,7 @@ const sendNewMessage = async (chatId: string , content: string, token: string) =
         chatId
     }
 
-    return axiosClient.post("/message", data, config); 
+    return axiosClient.post("/api/message", data, config); 
 }
 
 const fetchAllMessages = async (chatId: string, token: string) => {
@@ -22,7 +22,7 @@ const fetchAllMessages = async (chatId: string, token: string) => {
         }
     }
 
-    return axiosClient.get("/message/" + chatId, config);
+    return axiosClient.get("/api/message/" + chatId, config);
 }
 
 export {sendNewMessage, fetchAllMessages}

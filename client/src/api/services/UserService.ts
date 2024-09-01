@@ -14,7 +14,7 @@ interface UserLogin {
 }
 
 const registerUser = async (data: UserRegister) => {
-    return axiosClient.post("/user/register", data, {
+    return axiosClient.post("/api/user/register", data, {
         headers: {
             "Content-type": "application/json",
         }
@@ -22,7 +22,7 @@ const registerUser = async (data: UserRegister) => {
 }
 
 const loginUser = async (data: UserLogin) => {
-    return axiosClient.post("/user/login", data, {
+    return axiosClient.post("/api/user/login", data, {
         headers: {
             "Content-type": "application/json",
         }
@@ -35,7 +35,7 @@ const searchUser = async (keyword: string, token: string) => {
             Authorization: `Bearer ${token}`
         }
     };
-    return axiosClient.get(`/user?search=${keyword}`, config);
+    return axiosClient.get(`/api/user?search=${keyword}`, config);
 }
 
 

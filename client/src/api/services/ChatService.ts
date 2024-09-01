@@ -6,7 +6,7 @@ const accessChat = async (userId: string, token: string) => {
             Authorization: `Bearer ${token}`
         }
     };
-    return axiosClient.post("/chat", { userId }, config);
+    return axiosClient.post("/api/chat", { userId }, config);
 }
 
 const fetchChats = async (token: string) => {
@@ -17,7 +17,7 @@ const fetchChats = async (token: string) => {
         }
     };
 
-    return axiosClient.get("/chat", config);
+    return axiosClient.get("/api/chat", config);
 
 }
 
@@ -32,7 +32,7 @@ const createGroup = async (name: string, users: string, token: string) => {
         name,
         users
     }
-    return axiosClient.post(`/chat/group`, data, config);
+    return axiosClient.post(`/api/chat/group`, data, config);
 }
 
 const renameGroup = async (chatId: string, chatName: string, token: string) => {
@@ -47,7 +47,7 @@ const renameGroup = async (chatId: string, chatName: string, token: string) => {
         chatName
     }
 
-    return axiosClient.put("/chat/rename", data, config);
+    return axiosClient.put("/api/chat/rename", data, config);
 }
 
 const groupAdd = async (chatId: string, userId: string, token: string) => {
@@ -62,7 +62,7 @@ const groupAdd = async (chatId: string, userId: string, token: string) => {
         userId
     }
 
-    return axiosClient.put("/chat/groupAdd", data, config);
+    return axiosClient.put("/api/chat/groupAdd", data, config);
 }
 
 const groupRemove = async (chatId: string, userId: string, token: string) => {
@@ -76,7 +76,7 @@ const groupRemove = async (chatId: string, userId: string, token: string) => {
         userId
     }
 
-    return axiosClient.delete("/chat/groupRemove", {headers, data});
+    return axiosClient.delete("/api/chat/groupRemove", {headers, data});
 
 }
  

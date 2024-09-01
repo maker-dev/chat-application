@@ -33,7 +33,7 @@ export interface Message {
     updatedAt: string;
 }
 
-const ENDPOINT: string = "http://localhost:5000";
+const ENDPOINT: string = import.meta.env.VITE_API_BASE_URL;
 
 let socket: Socket;
 let selectedChatCompare: Chat;
