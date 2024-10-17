@@ -165,10 +165,29 @@ function SingleChat({fetchAgain, setFetchAgain}: SingleChatProps) {
         if (e.key === "Enter" && newMessage) {
             socket.emit("stop typing", selectedChat._id);
             try {
-                const {data} = await sendNewMessage(selectedChat._id, newMessage, user.token);
+                const sender: Sender = {
+                    _id: user._id,  // Assuming user object has _id
+                    name: user.name, // Assuming user object has name
+                    pic: user.pic    // Assuming user object has pic
+                };
+
+                // Construct an optimistic message object
+                const tempMessage: Message = {
+                    _id: Date.now().toString(), // Temporary ID
+                    chat: selectedChat,          // The selected chat context
+                    sender: sender,              // The sender details from the user
+                    content: newMessage,         // The actual message content
+                    createdAt: new Date().toISOString(), // Current timestamp
+                    updatedAt: new Date().toISOString()  // Same as createdAt initially
+                };
+                setMessages([...messages, tempMessage]);
+                socket.emit("new message", tempMessage);
                 setNewMessage("");
-                socket.emit("new message", data);
-                setMessages([...messages, data]);
+                const { data } = await sendNewMessage(selectedChat._id, newMessage, user.token);
+                setMessages((prevMessages) =>
+                    prevMessages.map((msg) => (msg._id === tempMessage._id ? data : msg))
+                );
+
             } catch (error) {
                 if (error instanceof AxiosError) {
                     toast({
