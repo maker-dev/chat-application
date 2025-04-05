@@ -57,6 +57,9 @@ npm run dev
 cd client
 npm install
 
+# Create a .env file and configure the environment variables
+cp .env.example .env
+
 # Start the React app
 npm start
 ```
